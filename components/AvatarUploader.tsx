@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Camera, Loader2, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { ImageCropperModal } from "@/components/ImageCropperModal";
 
 export function AvatarUploader({
   userId,
@@ -18,10 +19,11 @@ export function AvatarUploader({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [preview, setPreview] = useState<string | null>(currentUrl);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -31,20 +33,26 @@ export function AvatarUploader({
       setError("Selecciona un archivo de imagen.");
       return;
     }
-    if (file.size > 4 * 1024 * 1024) {
-      setError("La imagen no puede superar 4 MB.");
+    if (file.size > 8 * 1024 * 1024) {
+      setError("La imagen no puede superar 8 MB.");
       return;
     }
 
+    // En vez de subir directamente, abrimos el recorte para que ajuste el encuadre
+    setCropSrc(URL.createObjectURL(file));
+    e.target.value = "";
+  }
+
+  async function handleCropped(file: File) {
+    setCropSrc(null);
     setUploading(true);
     setPreview(URL.createObjectURL(file));
 
-    const ext = file.name.split(".").pop();
-    const path = `${userId}/avatar-${Date.now()}.${ext}`;
+    const path = `${userId}/avatar-${Date.now()}.jpg`;
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
-      .upload(path, file, { upsert: true });
+      .upload(path, file, { upsert: true, contentType: "image/jpeg" });
 
     if (uploadError) {
       setError("No se pudo subir la imagen. Inténtalo de nuevo.");
@@ -102,6 +110,15 @@ export function AvatarUploader({
 
       <span className="text-xs text-base-500">Toca para cambiar la foto</span>
       {error && <p className="text-danger text-xs">{error}</p>}
+
+      {cropSrc && (
+        <ImageCropperModal
+          imageSrc={cropSrc}
+          fileName={`avatar-${userId}.jpg`}
+          onCancel={() => setCropSrc(null)}
+          onConfirm={handleCropped}
+        />
+      )}
     </div>
   );
 }
