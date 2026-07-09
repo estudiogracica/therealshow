@@ -28,13 +28,12 @@ export default async function GolesPage({ params }: { params: { id: string } }) 
     .select("team, player:profiles(id, full_name, nickname)")
     .eq("match_id", params.id);
 
-  const roster: RosterPlayer[] = (rosterRows ?? [])
-    .map((row) => {
-      const player = row.player as unknown as { id: string; full_name: string; nickname: string | null } | null;
-      if (!player) return null;
-      return { id: player.id, name: player.nickname || player.full_name, team: row.team };
-    })
-    .filter((p): p is RosterPlayer => p !== null);
+  const roster: RosterPlayer[] = [];
+  for (const row of rosterRows ?? []) {
+    const player = row.player as unknown as { id: string; full_name: string; nickname: string | null } | null;
+    if (!player) continue;
+    roster.push({ id: player.id, name: player.nickname || player.full_name, team: row.team });
+  }
 
   const { data: goalRows } = await supabase
     .from("goals")

@@ -88,33 +88,32 @@ export default async function JugadorPage({
 
   const { data: rosterRows } = await rosterQuery;
 
-  const matchHistory: MatchHistoryItem[] = (rosterRows ?? [])
-    .map((row) => {
-      const match = row.match as unknown as {
-        id: string;
-        match_date: string;
-        location: string;
-        status: string;
-        result_color: number | null;
-        result_blanco: number | null;
-        season_id: string;
-      } | null;
-      if (!match || match.status !== "finalizado" || match.result_color === null || match.result_blanco === null) {
-        return null;
-      }
-      if (current !== "historico" && match.season_id !== current) return null;
-      return {
-        matchId: match.id,
-        date: match.match_date,
-        location: match.location,
-        team: row.team,
-        resultColor: match.result_color,
-        resultBlanco: match.result_blanco,
-      };
-    })
-    .filter((m): m is MatchHistoryItem => m !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 10);
+  const matchHistory: MatchHistoryItem[] = [];
+  for (const row of rosterRows ?? []) {
+    const match = row.match as unknown as {
+      id: string;
+      match_date: string;
+      location: string;
+      status: string;
+      result_color: number | null;
+      result_blanco: number | null;
+      season_id: string;
+    } | null;
+    if (!match || match.status !== "finalizado" || match.result_color === null || match.result_blanco === null) {
+      continue;
+    }
+    if (current !== "historico" && match.season_id !== current) continue;
+    matchHistory.push({
+      matchId: match.id,
+      date: match.match_date,
+      location: match.location,
+      team: row.team,
+      resultColor: match.result_color,
+      resultBlanco: match.result_blanco,
+    });
+  }
+  matchHistory.sort((a, b) => (a.date < b.date ? 1 : -1));
+  const matchHistoryTop = matchHistory.slice(0, 10);
 
   // --- Últimos goles ---
   const { data: goalRows } = await supabase
@@ -122,16 +121,15 @@ export default async function JugadorPage({
     .select("id, minute, match:matches(id, match_date, location, season_id)")
     .eq("player_id", params.id);
 
-  const ultimosGoles: ActivityItem[] = (goalRows ?? [])
-    .map((g) => {
-      const match = g.match as unknown as { id: string; match_date: string; location: string; season_id: string } | null;
-      if (!match) return null;
-      if (current !== "historico" && match.season_id !== current) return null;
-      return { id: g.id, matchId: match.id, date: match.match_date, location: match.location, minute: g.minute };
-    })
-    .filter((g): g is ActivityItem => g !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 5);
+  const ultimosGoles: ActivityItem[] = [];
+  for (const g of goalRows ?? []) {
+    const match = g.match as unknown as { id: string; match_date: string; location: string; season_id: string } | null;
+    if (!match) continue;
+    if (current !== "historico" && match.season_id !== current) continue;
+    ultimosGoles.push({ id: g.id, matchId: match.id, date: match.match_date, location: match.location, minute: g.minute });
+  }
+  ultimosGoles.sort((a, b) => (a.date < b.date ? 1 : -1));
+  const ultimosGolesTop = ultimosGoles.slice(0, 5);
 
   // --- Últimas asistencias ---
   const { data: assistRows } = await supabase
@@ -141,24 +139,24 @@ export default async function JugadorPage({
     )
     .eq("assist_player_id", params.id);
 
-  const ultimasAsistencias: ActivityItem[] = (assistRows ?? [])
-    .map((g) => {
-      const match = g.match as unknown as { id: string; match_date: string; location: string; season_id: string } | null;
-      const scorer = g.scorer as unknown as { full_name: string; nickname: string | null } | null;
-      if (!match) return null;
-      if (current !== "historico" && match.season_id !== current) return null;
-      return {
-        id: g.id,
-        matchId: match.id,
-        date: match.match_date,
-        location: match.location,
-        minute: g.minute,
-        targetName: scorer ? scorer.nickname || scorer.full_name : null,
-      };
-    })
-    .filter((g): g is ActivityItem => g !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 5);
+  const ultimasAsistencias: ActivityItem[] = [];
+  for (const g of assistRows ?? []) {
+    const match = g.match as unknown as { id: string; match_date: string; location: string; season_id: string } | null;
+    const scorer = g.scorer as unknown as { full_name: string; nickname: string | null } | null;
+    if (!match) continue;
+    if (current !== "historico" && match.season_id !== current) continue;
+    ultimasAsistencias.push({
+      id: g.id,
+      matchId: match.id,
+      date: match.match_date,
+      location: match.location,
+      minute: g.minute,
+      targetName: scorer ? scorer.nickname || scorer.full_name : null,
+    });
+  }
+  ultimasAsistencias.sort((a, b) => (a.date < b.date ? 1 : -1));
+  const ultimasAsistenciasTop = ultimasAsistencias.slice(0, 5);
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -222,7 +220,7 @@ export default async function JugadorPage({
         <h2 className="text-sm font-semibold text-base-500 uppercase tracking-wide mb-2">
           Historial de partidos
         </h2>
-        <MatchHistoryList items={matchHistory} />
+        <MatchHistoryList items={matchHistoryTop} />
       </section>
 
       {/* Últimos goles */}
@@ -230,7 +228,7 @@ export default async function JugadorPage({
         <h2 className="text-sm font-semibold text-base-500 uppercase tracking-wide mb-2">
           Últimos goles
         </h2>
-        <ActivityFeed items={ultimosGoles} emptyLabel="Todavía no ha marcado goles." icon="⚽" />
+        <ActivityFeed items={ultimosGolesTop} emptyLabel="Todavía no ha marcado goles." icon="⚽" />
       </section>
 
       {/* Últimas asistencias */}
@@ -238,7 +236,7 @@ export default async function JugadorPage({
         <h2 className="text-sm font-semibold text-base-500 uppercase tracking-wide mb-2">
           Últimas asistencias
         </h2>
-        <ActivityFeed items={ultimasAsistencias} emptyLabel="Todavía no tiene asistencias." icon="🎯" />
+        <ActivityFeed items={ultimasAsistenciasTop} emptyLabel="Todavía no tiene asistencias." icon="🎯" />
       </section>
     </div>
   );
