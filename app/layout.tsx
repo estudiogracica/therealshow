@@ -17,8 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://therealshow.vercel.app"),
   title: "The Real Show",
-  description: "Organiza los partidos de The Real Show: equipos, goles, asistencias y rankings.",
+  description: "TRS es para siempre ⚽ — organiza los partidos, equipos, goles y rankings del grupo.",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -31,6 +32,20 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "The Real Show",
+  },
+  openGraph: {
+    title: "The Real Show",
+    description: "TRS es para siempre ⚽",
+    siteName: "The Real Show",
+    locale: "es_ES",
+    type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "The Real Show" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Real Show",
+    description: "TRS es para siempre ⚽",
+    images: ["/og-image.png"],
   },
 };
 

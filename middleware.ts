@@ -61,6 +61,6 @@ export const config = {
      * Aplica el middleware a todas las rutas excepto:
      * - archivos estáticos, imágenes, manifest, service worker, etc.
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|icons|logo.png).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|icons|logo.png|og-image.png).*)",
   ],
 };
