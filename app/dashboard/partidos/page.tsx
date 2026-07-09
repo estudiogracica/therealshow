@@ -14,10 +14,11 @@ export default async function PartidosPage({
   const { profile } = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
 
-  const { data: seasons } = await supabase
+  const { data: seasonsRaw } = await supabase
     .from("seasons")
     .select("id, name, is_active")
     .order("created_at", { ascending: false });
+  const seasons = seasonsRaw as { id: string; name: string; is_active: boolean }[] | null;
 
   const activeSeason = seasons?.find((s) => s.is_active) ?? seasons?.[0];
   const currentSeasonId = searchParams.temporada || activeSeason?.id || "";

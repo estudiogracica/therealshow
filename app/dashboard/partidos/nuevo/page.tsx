@@ -12,11 +12,12 @@ export default async function NuevoPartidoPage() {
   if (profile.role !== "admin") redirect("/dashboard/partidos");
 
   const supabase = createClient();
-  const { data: seasons } = await supabase
+  const { data: seasonsRaw } = await supabase
     .from("seasons")
     .select("id, name")
     .order("is_active", { ascending: false })
     .order("created_at", { ascending: false });
+  const seasons = seasonsRaw as { id: string; name: string }[] | null;
 
   return (
     <div className="flex flex-col gap-6">

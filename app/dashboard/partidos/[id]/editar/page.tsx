@@ -21,11 +21,12 @@ export default async function EditarPartidoPage({ params }: { params: { id: stri
 
   if (!match) notFound();
 
-  const { data: seasons } = await supabase
+  const { data: seasonsRaw } = await supabase
     .from("seasons")
     .select("id, name")
     .order("is_active", { ascending: false })
     .order("created_at", { ascending: false });
+  const seasons = seasonsRaw as { id: string; name: string }[] | null;
 
   return (
     <div className="flex flex-col gap-6">

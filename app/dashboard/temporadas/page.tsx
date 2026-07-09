@@ -13,10 +13,11 @@ export default async function TemporadasPage() {
   if (profile.role !== "admin") redirect("/dashboard");
 
   const supabase = createClient();
-  const { data: seasons } = await supabase
+  const { data: seasonsRaw } = await supabase
     .from("seasons")
     .select("id, name, is_active")
     .order("created_at", { ascending: false });
+  const seasons = seasonsRaw as { id: string; name: string; is_active: boolean }[] | null;
 
   return (
     <div className="flex flex-col gap-6">
