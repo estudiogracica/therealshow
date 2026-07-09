@@ -34,22 +34,6 @@ export interface PlayerRatingRow {
 
 export interface Database {
   public: {
-    Views: {
-      player_stats: {
-        Row: Omit<PlayerRatingRow, "ritmo" | "pase" | "tiro" | "defensa" | "fisico" | "vision" | "media_general">;
-      };
-      player_ratings: {
-        Row: PlayerRatingRow;
-      };
-      player_season_stats: {
-        Row: Omit<PlayerRatingRow, "ritmo" | "pase" | "tiro" | "defensa" | "fisico" | "vision" | "media_general"> & {
-          season_id: string;
-        };
-      };
-      player_season_ratings: {
-        Row: PlayerRatingRow & { season_id: string };
-      };
-    };
     Tables: {
       profiles: {
         Row: {
@@ -74,6 +58,7 @@ export interface Database {
           avatar_url?: string | null;
           role?: PlayerRole;
         };
+        Relationships: [];
       };
       seasons: {
         Row: {
@@ -98,6 +83,7 @@ export interface Database {
           end_date?: string | null;
           is_active?: boolean;
         };
+        Relationships: [];
       };
       matches: {
         Row: {
@@ -133,6 +119,7 @@ export interface Database {
           result_blanco?: number | null;
           season_id?: string;
         };
+        Relationships: [];
       };
       match_players: {
         Row: {
@@ -150,6 +137,7 @@ export interface Database {
         Update: {
           team?: TeamColor;
         };
+        Relationships: [];
       };
       goals: {
         Row: {
@@ -176,7 +164,31 @@ export interface Database {
           team?: TeamColor;
           minute?: number | null;
         };
+        Relationships: [];
       };
     };
+    Views: {
+      player_stats: {
+        Row: Omit<PlayerRatingRow, "ritmo" | "pase" | "tiro" | "defensa" | "fisico" | "vision" | "media_general">;
+        Relationships: [];
+      };
+      player_ratings: {
+        Row: PlayerRatingRow;
+        Relationships: [];
+      };
+      player_season_stats: {
+        Row: Omit<PlayerRatingRow, "ritmo" | "pase" | "tiro" | "defensa" | "fisico" | "vision" | "media_general"> & {
+          season_id: string;
+        };
+        Relationships: [];
+      };
+      player_season_ratings: {
+        Row: PlayerRatingRow & { season_id: string };
+        Relationships: [];
+      };
+    };
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
