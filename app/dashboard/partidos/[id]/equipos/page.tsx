@@ -24,7 +24,7 @@ export default async function EquiposPage({ params }: { params: { id: string } }
 
   const { data: players } = await supabase
     .from("profiles")
-    .select("id, full_name, nickname, avatar_url")
+    .select("id, full_name, nickname, avatar_url, skill_rating")
     .order("full_name", { ascending: true });
 
   const { data: currentAssignments } = await supabase
@@ -48,6 +48,10 @@ export default async function EquiposPage({ params }: { params: { id: string } }
           <p className="text-xs text-base-500">{match.location}</p>
         </div>
       </div>
+
+      <Link href="/dashboard/valoraciones" className="text-pitch-500 text-sm font-semibold -mt-3">
+        Ajustar nivel de juego de los jugadores →
+      </Link>
 
       {!players || players.length === 0 ? (
         <div className="card p-6 text-center text-base-500">No hay jugadores registrados todavía.</div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, MapPin, Trophy, Users, IdCard, CalendarRange } from "lucide-react";
+import { CalendarDays, MapPin, Trophy, Users, IdCard, CalendarRange, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardPage() {
@@ -78,10 +78,16 @@ export default async function DashboardPage() {
           <span className="font-semibold">Ranking</span>
         </Link>
         {profile?.role === "admin" && (
-          <Link href="/dashboard/temporadas" className="card p-4 flex flex-col gap-2 items-start col-span-2">
-            <CalendarRange className="w-6 h-6 text-pitch-500" />
-            <span className="font-semibold">Temporadas</span>
-          </Link>
+          <>
+            <Link href="/dashboard/valoraciones" className="card p-4 flex flex-col gap-2 items-start">
+              <Star className="w-6 h-6 text-pitch-500" />
+              <span className="font-semibold">Nivel de juego</span>
+            </Link>
+            <Link href="/dashboard/temporadas" className="card p-4 flex flex-col gap-2 items-start">
+              <CalendarRange className="w-6 h-6 text-pitch-500" />
+              <span className="font-semibold">Temporadas</span>
+            </Link>
+          </>
         )}
       </section>
     </div>
