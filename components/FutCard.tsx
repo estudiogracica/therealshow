@@ -144,19 +144,14 @@ export function FutCard({
         <div className="relative h-full flex flex-col">
           {/* Cabecera: media + escudo decorativo */}
           <div className={clsx("flex items-start justify-between", isLg ? "px-4 pt-5" : "px-2.5 pt-3")}>
-            <div className="flex flex-col items-center leading-none">
-              <span
-                className={clsx(
-                  "font-display font-bold text-fut-goldDark drop-shadow-sm",
-                  isLg ? "text-4xl" : "text-2xl"
-                )}
-              >
-                {overall}
-              </span>
-              <span className={clsx("font-semibold text-fut-goldDark/80 mt-0.5", isLg ? "text-[10px]" : "text-[8px]")}>
-                MEDIA
-              </span>
-            </div>
+            <span
+              className={clsx(
+                "font-display font-bold text-fut-goldDark drop-shadow-sm leading-none",
+                isLg ? "text-4xl" : "text-2xl"
+              )}
+            >
+              {overall}
+            </span>
 
             <div className={clsx("relative shrink-0", isLg ? "w-7 h-9" : "w-4 h-5")}>
               <Image src="/logo.png" alt="Escudo de The Real Show" fill sizes="28px" className="object-contain" />
